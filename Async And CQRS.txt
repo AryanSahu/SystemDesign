@@ -1,0 +1,9 @@
+﻿Asynchronous Communication
+
+
+* https://landing.google.com/sre/sre-book/chapters/addressing-cascading-failures/
+* https://medium.com/@floyd.may/microservices-and-cascading-failures-16ec91c6ec9b
+* https://blog.risingstack.com/designing-microservices-architecture-for-failure/
+* CQRS example
+https://github.com/ddd-by-examples/all-things-cqrs/tree/master/explicit-with-dto
+https://thenewstack.io/how-cqrs-works-with-spring-tools/
