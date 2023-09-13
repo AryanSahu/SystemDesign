@@ -1,69 +1,52 @@
-A Singleton class is used when you want to ensure that a class has only one instance, and that instance is globally accessible throughout your program. 
-
-Example like  like connection pooling, logging,caching(cache manager),configuration.
+The Singleton design pattern is a creational design pattern that ensures a class has only one instance and provides a global point of access to that instance. It is commonly used in situations where you need to control access to a single resource, manage a shared resource, or maintain a single point of control like a configuration manager, database connection pool, or a logging service.
 
 
-class ConnectionPool
-{
-	
-private static ConnectionPool connectionpool;
+import java.io.Serializable;
 
-  private ConnectionPool()
-   {
+public class Singleton implements Serializable {
+    // Private volatile static instance variable
+    private static volatile Singleton instance;
 
-   }
+    // Private constructor to prevent instantiation from other classes
+    private Singleton() {
+        // Ensure that reflection cannot create a new instance
+        if (instance != null) {
+            throw new RuntimeException("Use getInstance() method to get the singleton instance.");
+        }
+    }
 
+    // Public static method to get the instance with double-checked locking
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
 
-// thread safety
+    // Implement readResolve method to maintain singleton during deserialization
+    protected Object readResolve() {
+        return getInstance();
+    }
 
-public static ConnectionPool getInstance()
-{
-
-	if(connectionpool==null)
-	{
-
-      synchronized(ConnectionPool.class)
-      {
-
-
-         if(connectionpool==null)
-         {
-
-          	 connectionpool=new ConnectionPool();
-
-          	 }
-
-
-      }
-
-
-	}
-	
-
-	return connectionpool;
-
-	
-
-	
-}
-
-
-// safety against deserilization
-
-protected Object readresolve()
-{
-	
-	return connectionpool;
-}
-
-
+    // Other methods and fields (if any)
+    public void doSomething() {
+        System.out.println("Singleton is doing something.");
+    }
 }
 
 
 
 
-A factory design pattern is used for creating instances of object when you have muliple child class implementation of same interface.
-It helps in decoupling of the creational logic and provides loose coupling.
+
+The Factory design pattern is a creational pattern that provides an interface for creating objects but allows subclasses to alter the type of objects that will be created. It promotes loose coupling by abstracting the process of object creation, making it easier to change or extend the types of objects created without modifying the client code that uses them.
+
+Advantages:
+
+Separation of Concerns: It separates the responsibility of creating objects from the client code that uses them.
 
 Interface Document
 {
@@ -96,14 +79,14 @@ enum DocumentType
 
 Interface DocumentFactory
 {
-	Document createDocument(DocumentType type)
+	Document create(DocumentType type)
 }
 
 class DocumentFactory implements DocumentFactory
 {
 	
 
-   Document createDocument(DocumentType type)
+   Document create(DocumentType type)
    {
      
      switch(type)
@@ -131,7 +114,8 @@ class DocumentFactory implements DocumentFactory
 }
 
 
-Builder design pattern is used when you have complex object creation attributes to simplify. These pattern is coommon when attibutes are optional.
+
+The Builder design pattern is a creational pattern used to construct complex objects step by step. It provides a way to create an object with many optional parameters and configurations while keeping the object immutable. This pattern is particularly useful when an object has a large number of constructor parameters, some of which are optional.
 
 
 
@@ -160,11 +144,6 @@ Class Computer
 
 
 	}
-
-
-
-
-
 
 
 
@@ -282,8 +261,7 @@ class TimeStamplogger implements Logger
 }
 
 
-
-The Decorator pattern is a behavioural design pattern that allows you to add behavior or responsibilities to objects dynamically, without altering their original class.
+The Observer design pattern is a behavioral pattern that defines a one-to-many dependency between objects. In this pattern, when one object (the subject) changes its state, all its dependents (observers) are notified and updated automatically.
 
 
 import java.util.ArrayList;
