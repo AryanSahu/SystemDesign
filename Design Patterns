@@ -1,0 +1,458 @@
+A Singleton class is used when you want to ensure that a class has only one instance, and that instance is globally accessible throughout your program. 
+
+Example like  like connection pooling, logging,caching(cache manager),configuration.
+
+
+class ConnectionPool
+{
+	
+private static ConnectionPool connectionpool;
+
+  private ConnectionPool()
+   {
+
+   }
+
+
+// thread safety
+
+public static ConnectionPool getInstance()
+{
+
+	if(connectionpool==null)
+	{
+
+      synchronized(ConnectionPool.class)
+      {
+
+
+         if(connectionpool==null)
+         {
+
+          	 connectionpool=new ConnectionPool();
+
+          	 }
+
+
+      }
+
+
+	}
+	
+
+	return connectionpool;
+
+	
+
+	
+}
+
+
+// safety against deserilization
+
+protected Object readresolve()
+{
+	
+	return connectionpool;
+}
+
+
+}
+
+
+
+
+A factory design pattern is used for creating instances of object when you have muliple child class implementation of same interface.
+It helps in decoupling of the creational logic and provides loose coupling.
+
+Interface Document
+{
+	void open()
+	void save()
+
+}
+
+class PDF implements Document
+{
+	
+	// open
+
+	//save
+}
+
+class Word implements Document
+{
+	
+	// open
+
+	//save
+}
+
+enum DocumentType
+{
+	PDF,WORD;
+}
+
+
+Interface DocumentFactory
+{
+	Document createDocument(DocumentType type)
+}
+
+class DocumentFactory implements DocumentFactory
+{
+	
+
+   Document createDocument(DocumentType type)
+   {
+     
+     switch(type)
+     {
+
+     case WORD:
+     return new Word();
+
+     case PDF:
+     retrun new PDF();
+
+     default:
+     throw new IllegalArgument("Unsupported Document Type"); 
+
+
+
+     }
+
+
+
+
+   }
+
+
+}
+
+
+Builder design pattern is used when you have complex object creation attributes to simplify. These pattern is coommon when attibutes are optional.
+
+
+
+Class Computer
+{
+	String name;
+	String manufacturer;
+	Double price;
+	Date YOM;
+	String cpu;
+	String memory;
+	String HD;
+
+
+	private Computer(Builder builder)
+	{
+ 
+
+     this.name=builder.name;
+     this.price=builder.price;
+     this.manufacturer=builder.manufacturer;
+     this.YOM=builder.YOM;
+     this.cpu=builder.cpu;
+     this.memory=builder.memory;
+     this.HD=builder.HD;
+
+
+	}
+
+
+
+
+
+
+
+
+public static class Builder
+{
+	
+	String name;
+	String manufacturer;
+	Double price;
+	Date YOM;
+	String cpu;
+	String memory;
+	String HD;
+
+
+Builder(String name)
+{
+	this. name=name;
+}
+
+
+public Builder manufacturer(String manufacturer)
+{
+	this.manufacturer=manufacturer;
+}
+/// rest of the methods
+
+
+public Computer build()
+{
+	
+
+	return new Computer(this);
+}
+
+
+
+}
+
+
+} // end of computer class
+
+
+Structural design patterns in software engineering are used to solve design problems related to the composition, relationships, and organization of classes and objects within a software system. 
+
+Adapter is a structural design pattern that allows objects with incompatible interfaces to collaborate.
+
+Interface XMLSystem
+{
+	
+	public void processMessage(String XML);
+}
+
+Interface JsonSystem
+{
+	public void processMessage(String JSON);
+
+}
+
+Class XMLAdapter implements JSONSystem
+{
+	XMLSystem xmlsystem;
+
+XMLAdapter(XMLSystem xmlsystem)
+{
+	xmlsystem=xmlsystem;
+}
+
+ public void processMessage(String json)
+ {
+
+   xml= convertjsontoxml logic  
+
+   xmsystem.processMessage(xml);
+
+ }
+
+}
+
+
+
+The Decorator pattern is a structural design pattern that allows you to add behavior or responsibilities to objects dynamically, without altering their original class. It is used to extend the functionality of objects in a flexible and reusable way.
+
+Interface Logger
+{
+	
+	public void log(String message);
+
+}
+
+class Basiclogger implements Logger
+{
+	Logger logger;
+	public void log(String message)
+	{
+
+     System.out.println("message "+message);
+
+	}
+}
+
+class TimeStamplogger implements Logger
+{
+	Logger logger;
+	public void log(String message)
+	{
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+     String timestampedMessage = "[" + dateFormat.format(new Date()) + "] " + message;
+
+     logger.log(timestampedmessage+message);
+
+
+	}
+}
+
+
+
+The Decorator pattern is a behavioural design pattern that allows you to add behavior or responsibilities to objects dynamically, without altering their original class.
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+// Subject interface
+interface Subject {
+    void addObserver(Observer observer);
+    void removeObserver(Observer observer);
+    void notifyObservers();
+}
+
+// Concrete subject
+class WeatherStation implements Subject {
+    private int temperature;
+    private List<Observer> observers = new ArrayList<>();
+
+    public int getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(int temperature) {
+        this.temperature = temperature;
+        notifyObservers();
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(temperature);
+        }
+    }
+}
+
+// Observer interface
+interface Observer {
+    void update(int temperature);
+}
+
+// Concrete observer
+class TemperatureDisplay implements Observer {
+    private int temperature;
+
+    @Override
+    public void update(int temperature) {
+        this.temperature = temperature;
+        display();
+    }
+
+    public void display() {
+        System.out.println("Temperature Display: " + temperature + "°C");
+    }
+}
+
+// Concrete observer
+class PhoneApp implements Observer {
+    private int temperature;
+
+    @Override
+    public void update(int temperature) {
+        this.temperature = temperature;
+        display();
+    }
+
+    public void display() {
+        System.out.println("Phone App: The current temperature is " + temperature + "°C");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Create the subject (WeatherStation)
+        WeatherStation weatherStation = new WeatherStation();
+
+        // Create observers (TemperatureDisplay and PhoneApp)
+        TemperatureDisplay temperatureDisplay = new TemperatureDisplay();
+        PhoneApp phoneApp = new PhoneApp();
+
+        // Register observers with the subject
+        weatherStation.addObserver(temperatureDisplay);
+        weatherStation.addObserver(phoneApp);
+
+        // Simulate a change in temperature
+        weatherStation.setTemperature(25);
+        weatherStation.setTemperature(30);
+    }
+}
+
+
+The Strategy Pattern is a behavioral design pattern that defines a family of algorithms, encapsulates each one of them, and makes them interchangeable. It allows a client to choose an algorithm from a family of algorithms at runtime, without altering the code that uses the algorithm. 
+
+
+// Strategy interface
+interface PaymentStrategy {
+    void pay(int amount);
+}
+
+// Concrete strategy 1
+class CreditCardPayment implements PaymentStrategy {
+    private String cardNumber;
+    private String name;
+
+    public CreditCardPayment(String cardNumber, String name) {
+        this.cardNumber = cardNumber;
+        this.name = name;
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paid $" + amount + " with Credit Card (Card Number: " + cardNumber + ", Name: " + name + ")");
+    }
+}
+
+// Concrete strategy 2
+class PayPalPayment implements PaymentStrategy {
+    private String email;
+
+    public PayPalPayment(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paid $" + amount + " with PayPal (Email: " + email + ")");
+    }
+}
+
+// Context (shopping cart)
+class ShoppingCart {
+    private PaymentStrategy paymentStrategy;
+
+    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    public void checkout(int totalAmount) {
+        paymentStrategy.pay(totalAmount);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Create a shopping cart
+        ShoppingCart cart = new ShoppingCart();
+
+        // Choose a payment strategy (Credit Card)
+        PaymentStrategy creditCardPayment = new CreditCardPayment("1234-5678-9876-5432", "John Doe");
+        cart.setPaymentStrategy(creditCardPayment);
+
+        // Checkout with the chosen payment strategy
+        cart.checkout(100);
+
+        // Choose a different payment strategy (PayPal)
+        PaymentStrategy paypalPayment = new PayPalPayment("johndoe@example.com");
+        cart.setPaymentStrategy(paypalPayment);
+
+        // Checkout again with the new payment strategy
+        cart.checkout(50);
+    }
+}
+
+
